@@ -1,0 +1,130 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background: url('/static/img/back.jpg') top repeat #01061b;
+  background-attachment: scroll;
+  background-size: auto;
+  background-attachment: fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+  color: white;
+  font-family: sans-serif;
+}
+
+.panel{
+  color: white;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  transition: all .5s ease-in-out;
+  border-radius: 50%;
+}
+.panel:hover{
+  background-color: #6f6f6f7f;
+  border-radius: 50%;
+}
+
+a{
+  color: black;
+  text-decoration: none;
+  text-transform: none;
+}
+
+.selector{
+  width: 100%;
+  text-align: center;
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-weight: 900;
+}
+
+.table{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: max-content;
+}
+
+.table .title{
+  font-size: 25px;
+  font-weight: 900;
+  border-top: 2px solid #01061b;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+}
+
+.table .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.table .container .match{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: RGBA(0, 17, 85, 0.5);
+  padding: 5px;
+  border: none;
+  margin: 5px;
+  min-width: 260px;
+  border-radius: 12px;
+}
+
+.table .container .match .top{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: rgb(232, 229, 229);
+}
+
+.table .container .match .top .center{
+  font-size: x-large;
+  font-weight: bolder;
+}
+
+.table .container .match .top .team{
+  margin: 0 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.table .container .match .top .team img{
+  margin: 0 5px;
+}
+
+.table .container .match button{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+  margin-top: 10px;
+  height: 35px;
+}
