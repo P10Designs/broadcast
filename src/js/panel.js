@@ -9,6 +9,10 @@ let ms = 100
 const periodTime = '25:00'
 let localPossesion = 0
 let visitorPossesion = 0
+let localFaults = 0
+let visitorFaults = 0
+let localPowerShoots = 0
+let visitorPowerShoots = 0
 
 const faults = ['CC', 'AG', 'BE', 'CA', 'CG', 'CE', 'CI', 'IF', 'CZ', 'SP', 'EG', 'MC', 'RZ', 'PP', 'SL', 'SA', 'ZC', 'VI']
 const periods = ['1st', 'DES', '2nd', 'DES', 'OT', 'PEN']
@@ -734,6 +738,53 @@ document.body.onload = async () => {
             document.querySelector('#visitor_possesion').textContent = ((visitorPossesion * 100) / timePassed).toFixed(2) + '%'
             document.querySelector('#local_possesion').textContent = ((localPossesion * 100) / timePassed).toFixed(2) + '%'
           }
+          if (document.querySelector('.period').innerHTML.trim() !== 'DES') {
+            document.querySelectorAll('.local_power').forEach((power) => {
+              if (power.value !== '') {
+                let powerUpdate = true
+                const data = power.value.split(':')
+                if (Number(data[1]) === 0) {
+                  if (Number(data[0]) === 0) {
+                    data[0] = 0
+                    data[1] = 0
+                    powerUpdate = false
+                    endPower()
+                  } else {
+                    data[0] = Number(data[0]) - 1
+                    data[1] = 59
+                  }
+                } else {
+                  data[1] = Number(data[1]) - 1
+                }
+                if (powerUpdate) {
+                  power.value = `${Number(data[0]) < 10 ? '0' + Number(data[0]) : Number(data[0])}:${Number(data[1]) < 10 ? '0' + Number(data[1]) : Number(data[1])}`
+                }
+              }
+            })
+            document.querySelectorAll('.visitor_power').forEach((power) => {
+              if (power.value !== '') {
+                let powerUpdate = true
+                const data = power.value.split(':')
+                if (Number(data[1]) === 0) {
+                  if (Number(data[0]) === 0) {
+                    data[0] = 0
+                    data[1] = 0
+                    powerUpdate = false
+                    endPower()
+                  } else {
+                    data[0] = Number(data[0]) - 1
+                    data[1] = 59
+                  }
+                } else {
+                  data[1] = Number(data[1]) - 1
+                }
+                if (powerUpdate) {
+                  power.value = `${Number(data[0]) < 10 ? '0' + Number(data[0]) : Number(data[0])}:${Number(data[1]) < 10 ? '0' + Number(data[1]) : Number(data[1])}`
+                }
+              }
+            })
+          }
+
           if (Number(split[1]) === 0) {
             if (Number(split[0]) === 0) {
               runningTime = false
@@ -790,12 +841,14 @@ async function genView () {
           <span>POSESIÓN: </span>
           <span id='local_possesion'>0.00%</span>
         </div>
+        <div style='display:flex; flex-direction: column; align-items:flex-start;'>
+          <input class='local_power' number="1" value=''/>
+          <input class='local_power' number="2" value=''/>
+        </div>
       </div>
     </div>
     <div class="bot">
-      <button class='button' onClick="(() => {
-        document.querySelector('#local_tiros').textContent = Number(document.querySelector('#local_tiros').textContent) + 1
-      })()">
+      <button class='button'onClick="tiros('local')">
         <svg width="50px" height="50px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.002 512.002" style="enable-background:new 0 0 512.002 512.002;" xml:space="preserve"><g><path d="M505.317,50.234c4.404-7.865,5.48-16.975,3.032-25.649c-2.449-8.672-8.129-15.874-15.99-20.273    C487.327,1.49,481.634,0,475.893,0c-12.213,0-23.503,6.617-29.473,17.286l-101.478,182.04L243.907,380.567    c-4.736,2.591-26.153,6.597-78.648,5.164c-38.713-1.056-74.277-4.665-82.69-7.303c-7.174-3.135-14.79-4.742-22.647-4.78h-0.271    c-15.201,0-29.509,5.886-40.314,16.593c-10.87,10.769-16.895,25.13-16.965,40.434c-0.092,20.06,10.517,38.937,27.704,49.323    c1.244,0.821,2.689,1.61,4.405,2.408c3.989,1.955,8.22,3.442,12.585,4.424c23.699,6.548,66.059,10.311,107.414,10.311    c16.801,0,33.419-0.629,48.566-1.937c9.885,10.338,23.795,16.797,39.193,16.797h119.05c29.917,0,54.256-24.338,54.256-54.256    c0-29.917-24.338-54.256-54.256-54.256h-52.897l95.457-171.233L505.317,50.234z M361.29,421.566    c19.949,0,36.179,16.23,36.179,36.179c0,19.949-16.23,36.179-36.179,36.179H242.24c-19.949,0-36.179-16.23-36.179-36.179    s16.23-36.179,36.179-36.179H361.29z M287.7,403.489h-45.46c-29.917,0-54.256,24.338-54.256,54.256    c0,7.127,1.394,13.93,3.903,20.171c-48.864,3.125-111.177-0.482-140.206-8.565c-0.159-0.045-0.321-0.084-0.482-0.122    c-3.071-0.676-6.043-1.715-8.831-3.09c-0.067-0.033-0.135-0.065-0.202-0.096c-1.257-0.581-1.913-0.983-2.191-1.173    c-0.136-0.092-0.276-0.181-0.416-0.265c-11.851-7.097-19.174-20.066-19.11-33.849c0.048-10.474,4.172-20.303,11.612-27.675    c7.396-7.327,17.188-11.356,27.591-11.356h0.184c5.491,0.026,10.807,1.171,15.802,3.403c0.253,0.113,0.512,0.215,0.775,0.304    c12.353,4.206,56.005,7.594,91.07,8.439c78.809,1.902,87.204-7.873,90.361-11.553c0.394-0.459,0.741-0.956,1.035-1.485    l97.443-174.8l27.344,15.303L287.7,403.489z M365.125,200.245L462.202,26.1c2.769-4.948,8.016-8.023,13.691-8.023    c2.653,0,5.291,0.692,7.632,2.005c3.652,2.043,6.288,5.387,7.425,9.413s0.638,8.255-1.415,11.923l-97.068,174.128L365.125,200.245z"/></g></svg>
         TIRO
       </button>
@@ -821,14 +874,15 @@ async function genView () {
   <input id="time" value="${periodTime}" style="display:none;"></input>
       <div class='top'>
         <div class="result">
-          <button id='local_result'>0</button>
-          <button id='visitor_result'>0</button>
+          <button id='local_result' onClick="goalEditor('local')">0</button>
+          <button id='visitor_result' onClick="goalEditor('visitor')">0</button>
         </div>
-        <button class="time" id="timeContainer">
+        <button class="time" id="timeContainer" onClick="timeEditor()">
           ${periodTime}
         </button>
       </div>
       <button class='period' id='period' onClick="period()">${periods[0]}</button>
+      <div class='status' style="border-top:1px solid #fff">4 vs 4</div>
       <div class='mid'></div>
       <div class='bot'>
         <button class='button' id="timeToggle">
@@ -844,6 +898,10 @@ async function genView () {
     </div>
     <div class='mid'>
       <div class='info'>
+        <div style='display:flex;flex-direction:column;'>
+          <input class='visitor_power' number="1" value=''/>
+          <input class='visitor_power' number="2" value=''/>
+        </div>
         <div>
           <span>POSESIÓN: </span>
           <span id='visitor_possesion'>0.00%</span>
@@ -874,9 +932,7 @@ async function genView () {
         <svg width="50px" height="50px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--noto" preserveAspectRatio="xMidYMid meet"><path d="M35.89 98.57c-.01-.14-1.02-14.31-1.02-23.58c0-8.68.13-28.31.14-30.84c-.45-.79-2-3.47-3.33-5.39c-1.62-2.36-4.75-8.47-4.88-8.72l1.78-.91c.03.06 3.2 6.25 4.75 8.5c1.61 2.35 3.47 5.63 3.55 5.77l.13.23v.27c0 .22-.15 21.86-.15 31.09c0 9.2 1.01 23.29 1.02 23.43l-1.99.15z" fill="#b7cbd3"/><path d="M48.84 99.58l-2-.14c0-.02.15-2.2-.15-6.58l-.24-3.55c-.49-7.18-.96-13.96-1.08-23.95c-.14-11.56.11-20.44.14-21.54c-.1-.48-.61-2.78-2.11-6.26c-1.8-4.2-2.11-8.61-2.12-8.8l2-.13c0 .04.31 4.27 1.97 8.14c1.78 4.15 2.24 6.68 2.26 6.79l.02.1v.1c0 .09-.29 9.32-.15 21.56c.12 9.94.58 16.69 1.07 23.84l.24 3.55c.3 4.56.15 6.78.15 6.87z" fill="#b7cbd3"/><path d="M57.35 98.07c-.01-.36-.59-36.56-.73-42.48c-.13-5.46-.02-11.35 0-12.32c-.2-.8-1.18-4.81-1.45-8.06c-.2-2.36-.01-6.52 0-6.7l2 .09c0 .04-.19 4.21 0 6.44c.28 3.38 1.42 7.82 1.43 7.86l.03.13v.14c0 .06-.14 6.47 0 12.36c.14 5.92.72 42.13.73 42.49l-2.01.05z" fill="#b7cbd3"/><path d="M69.47 98.07l-.58-53.93l.01-.06c.02-.17.45-4.16 1.03-7.23c.37-1.92.57-4.65.57-7.7h2c0 3.21-.21 6-.6 8.07c-.53 2.79-.95 6.51-1 7.02l.58 53.81l-2.01.02z" fill="#b7cbd3"/><path d="M82.86 98.64h-2c0-.1 0-9.83-.15-27.29c-.14-17.47-.15-26.92-.15-27.02v-.18l.06-.17c.01-.03 1.01-2.76 1.72-5.59c.73-2.92 2.19-9.04 2.19-9.04l1.95.46s-1.46 6.14-2.19 9.06c-.64 2.56-1.49 4.97-1.72 5.63c0 1.37.01 10.67.15 26.83c.14 17.47.14 27.21.14 27.31z" fill="#b7cbd3"/><path d="M91.66 97.33l-.44-52.51l.11-.22s3.07-5.99 4.68-9.06c1.61-3.07 4.03-6.79 4.14-6.94l1.67 1.09c-.02.04-2.47 3.79-4.04 6.78c-1.42 2.72-3.99 7.72-4.56 8.83l.44 52.02l-2 .01z" fill="#b7cbd3"/><path d="M17.65 104.02l-1.81-.84c.5-1.08 1.81-4.27 1.81-6c0-.79-.02-3.89-.04-7.99c-.04-7.9-.11-19.84-.11-25.73c0-8.81.29-25.69.29-25.86l2 .03c0 .17-.29 17.03-.29 25.82c0 5.89.06 17.82.11 25.72c.02 4.11.04 7.21.04 8c-.01 2.54-1.92 6.68-2 6.85z" fill="#b7cbd3"/><path d="M108.16 101.13c0-.18-.14-17.93 0-27.03c.03-2.14.09-5.12.16-8.47c.2-10.42.5-26.17.29-28.35l1.99-.2c.23 2.3-.05 16.88-.28 28.59c-.06 3.35-.12 6.33-.16 8.46c-.14 9.08 0 26.81 0 26.99l-2 .01z" fill="#b7cbd3"/><path d="M60.05 55.42c-24.91 0-34.43-2.86-34.84-2.98l-.21-.09c-.03-.02-3.19-1.88-6.72-3.29c-3.72-1.49-8.07-4.66-8.25-4.79l1.18-1.61c.04.03 4.32 3.16 7.81 4.55c3.34 1.34 6.28 3.01 6.89 3.36c1.14.32 11.93 3.12 37.7 2.85c25.41-.27 37.92-2.4 39.62-2.72l11.65-8.2l1.15 1.64l-12 8.44l-.21.04c-.12.03-12.68 2.5-40.19 2.79c-1.24 0-2.43.01-3.58.01z" fill="#b7cbd3"/><path d="M64.63 64.02c-28.68 0-38.21-2.95-39.73-3.5c-.89.03-4.44.14-6.26.14c-2.03 0-7.53-.14-7.76-.15l.05-2c.06 0 5.7.15 7.71.15c2 0 6.35-.14 6.39-.15l.22-.01l.2.08c.08.03 8.81 3.43 39.18 3.43c30.46 0 38.5-1.99 38.58-2.01l13.57-3.65l.52 1.93l-13.58 3.65c-.32.09-8.22 2.09-39.09 2.09z" fill="#b7cbd3"/><path d="M59.32 73.67c-25.32 0-32.21-2.06-33.94-2.87c-.9.23-3.34.86-6.64 1.66c-4.28 1.03-8.21 1.19-8.37 1.2l-.07-2c.04 0 3.9-.16 7.98-1.14c4.17-1.01 6.96-1.74 6.99-1.75l.49-.13l.39.32c.14.09 4.97 2.97 37.46 2.7c33.05-.28 38.79-2.59 39.02-2.69l.27-.12l.31.04c.02 0 2.45.42 5.96.42c3.62 0 8.74.14 8.79.15l-.06 2c-.05 0-5.14-.15-8.73-.15c-3.04 0-5.28-.3-6.03-.41c-1.57.52-9.45 2.49-39.51 2.75c-1.5.01-2.94.02-4.31.02z" fill="#b7cbd3"/><path d="M11.76 84.45l-.26-1.98c.03 0 3.35-.44 6.75-1.29c3.4-.85 7.15-2.29 7.18-2.3l.28-.11l.29.07c.11.02 11.35 2.45 38.16 1.87c26.92-.58 38.73-2.45 38.84-2.47l.28-.04l.26.11c.02.01 1.76.72 5.98 1.7c4.34 1.01 8.31 2.04 8.35 2.05l-.5 1.94c-.04-.01-3.98-1.03-8.3-2.04c-3.5-.82-5.36-1.45-6.02-1.7c-1.92.28-14.03 1.92-38.85 2.45c-25.01.54-36.37-1.47-38.34-1.86c-.95.36-4.12 1.51-7.14 2.27c-3.5.87-6.82 1.31-6.96 1.33z" fill="#b7cbd3"/><path d="M116.93 96.78s-5.26-2.34-8.48-3.8a24.216 24.216 0 0 1-4.69-2.81l-.64.55l-.34.02c-.14.01-14.17.74-38.29 1.17c-22.53.4-37.41-.7-39.43-.86l-12.78 5.03l-.73-1.86l13.21-5.2l.24.01c.15.01 15.42 1.31 39.46.87c22.02-.39 35.6-1.04 37.88-1.15l1.44-1.23l.65.6c.02.02 1.84 1.67 4.85 3.04c3.21 1.46 8.46 3.79 8.46 3.79l-.81 1.83z" fill="#b7cbd3"/><path d="M70.2 35.57c-2.1 0-4.3-.01-6.6-.03c-35.84-.29-46.56-1.31-46.66-1.32l.2-1.99c.1.01 10.78 1.02 46.48 1.31c35.61.29 47.58-1.86 47.7-1.88l.37 1.97c-.46.09-10.75 1.94-41.49 1.94z" fill="#b7cbd3"/><path d="M70.8 40.38c-2.22 0-4.56 0-7.05-.01c-36.63-.15-42.75-1.44-42.99-1.49l.43-1.95c.25.05 6.46 1.29 42.57 1.44c36.24.14 43.14-.85 43.2-.86l.31 1.98c-.25.02-6.05.89-36.47.89z" fill="#b7cbd3"/><path d="M104.52 96.46l.37-50.94l11.58-12.58l-2.62-4.36L100.9 42.9l-74.47-.75l-14.44-15.67l-3.74 3.49l15.5 16.12l.19 51.75l-11.58 4.61l-.37 5.48l14.7-6.1l76.84-.75l12.7 6.48l-.12-4.86l-11.59-6.24zm-3.86-.62c-.62.37-72.23.75-72.6.5S27 47.96 27.81 47.15c.62-.62 71.73-.25 73.1.37c.68.31.51 10.98.37 22.79c-.16 12.11-.31 25.34-.62 25.53z" fill="#9a9a9a"/><path d="M5.93 105.72l3.01 3.25s.9-.01 2.11-.25c1.24-.24 2.08-.86 2.3-1.74c.31-1.24-.33-72.02-.33-72.02c.09-1.61-.09-3.32 2.15-3.41c2.24-.09 95.96-.09 97.03-.09s2.69.36 2.69 2.78s-.45 71.83-.36 72.46c.09.63.69 1.5 2.44 1.87c1.85.39 4.2.11 4.2.11l1.25-11.04l-1.39-71.55L9.19 25.04l-3.92 6.19l.66 74.49z" fill="#df0a2b"/><path d="M5.62 24.69c-2.24 2.99-1.7 6.14-1.7 15.02s-.13 64.25 0 65.82c.13 1.57.33 2.62 2.25 3.17c1.39.39 2.75.27 2.75.27s.22-76.83.22-78.01s-.26-3.26 1.96-3.53s103.04.26 104.21.13s3.13 1.04 3.13 2.48s.76 78.74.76 78.74s3.57.26 4.33-1.3c.77-1.57.52-77.31.26-79.4s-1.96-4.57-5.35-5.35s-105.64-.79-107.46-.66s-4.18 1.05-5.36 2.62z" fill="#ff180a"/></svg>
         GOL
       </button>
-      <button class='button' onClick="(() => {
-        document.querySelector('#visitor_tiros').textContent = Number(document.querySelector('#visitor_tiros').textContent) + 1
-      })()">
+      <button class='button' onClick="tiros('visitor')">
         <svg width="50px" height="50px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.002 512.002" style="enable-background:new 0 0 512.002 512.002;" xml:space="preserve"><g><path d="M505.317,50.234c4.404-7.865,5.48-16.975,3.032-25.649c-2.449-8.672-8.129-15.874-15.99-20.273    C487.327,1.49,481.634,0,475.893,0c-12.213,0-23.503,6.617-29.473,17.286l-101.478,182.04L243.907,380.567    c-4.736,2.591-26.153,6.597-78.648,5.164c-38.713-1.056-74.277-4.665-82.69-7.303c-7.174-3.135-14.79-4.742-22.647-4.78h-0.271    c-15.201,0-29.509,5.886-40.314,16.593c-10.87,10.769-16.895,25.13-16.965,40.434c-0.092,20.06,10.517,38.937,27.704,49.323    c1.244,0.821,2.689,1.61,4.405,2.408c3.989,1.955,8.22,3.442,12.585,4.424c23.699,6.548,66.059,10.311,107.414,10.311    c16.801,0,33.419-0.629,48.566-1.937c9.885,10.338,23.795,16.797,39.193,16.797h119.05c29.917,0,54.256-24.338,54.256-54.256    c0-29.917-24.338-54.256-54.256-54.256h-52.897l95.457-171.233L505.317,50.234z M361.29,421.566    c19.949,0,36.179,16.23,36.179,36.179c0,19.949-16.23,36.179-36.179,36.179H242.24c-19.949,0-36.179-16.23-36.179-36.179    s16.23-36.179,36.179-36.179H361.29z M287.7,403.489h-45.46c-29.917,0-54.256,24.338-54.256,54.256    c0,7.127,1.394,13.93,3.903,20.171c-48.864,3.125-111.177-0.482-140.206-8.565c-0.159-0.045-0.321-0.084-0.482-0.122    c-3.071-0.676-6.043-1.715-8.831-3.09c-0.067-0.033-0.135-0.065-0.202-0.096c-1.257-0.581-1.913-0.983-2.191-1.173    c-0.136-0.092-0.276-0.181-0.416-0.265c-11.851-7.097-19.174-20.066-19.11-33.849c0.048-10.474,4.172-20.303,11.612-27.675    c7.396-7.327,17.188-11.356,27.591-11.356h0.184c5.491,0.026,10.807,1.171,15.802,3.403c0.253,0.113,0.512,0.215,0.775,0.304    c12.353,4.206,56.005,7.594,91.07,8.439c78.809,1.902,87.204-7.873,90.361-11.553c0.394-0.459,0.741-0.956,1.035-1.485    l97.443-174.8l27.344,15.303L287.7,403.489z M365.125,200.245L462.202,26.1c2.769-4.948,8.016-8.023,13.691-8.023    c2.653,0,5.291,0.692,7.632,2.005c3.652,2.043,6.288,5.387,7.425,9.413s0.638,8.255-1.415,11.923l-97.068,174.128L365.125,200.245z"/></g></svg>
         TIRO
       </button>
@@ -978,9 +1034,17 @@ function closeModal () {
 function saveModal (type, team) {
   if (type === 'goal') {
     document.querySelector(`#${team}_result`).textContent = Number(document.querySelector(`#${team}_result`).textContent) + 1
+    endPower(team === 'local' ? 'visitor' : 'local')
   } else if (type === 'period') {
     document.querySelector('#period').textContent = team
     periodTimeHandler()
+  } else if (type === 'score') {
+    document.querySelector(`#${team}_result`).textContent = document.querySelector('#score_editor').value
+  } else if (type === 'time') {
+    document.querySelector('#time').value = document.querySelector('#time_editor').value
+    document.querySelector('#timeContainer').textContent = document.querySelector('#time_editor').value
+  } else if (type === 'fault') {
+    powerInvoker(team)
   }
   closeModal()
 }
@@ -1021,6 +1085,7 @@ function fault (team) {
   panel.style.display = ''
   let string = '<div class="fault"><span class="title">FALTA</span>'
   if (team === 'local') {
+    localFaults += 1
     localPlayers.forEach((p) => {
       string += `<div class='player'>
       <img src=${p.img} />
@@ -1028,6 +1093,7 @@ function fault (team) {
       </div>`
     })
   } else if (team === 'visitor') {
+    visitorFaults += 1
     visitorPlayers.forEach((p) => {
       string += `<div class='player'>
       <img src=${p.img} />
@@ -1078,5 +1144,102 @@ function periodTimeHandler () {
   if (period === 'OT') {
     document.querySelector('#time').value = '05:00'
     document.querySelector('#timeContainer').textContent = '05:00'
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+function goalEditor (team) {
+  const panel = document.querySelector('.modal-panel')
+  panel.style.display = ''
+  let string = '<div class="fault" style="width:200px;"><span class="title">SCORE</span>'
+  string += `<input id='score_editor' style="margin:10px;" value="${document.querySelector(`#${team}_result`).textContent}" />`
+  string += '<div class="down"><div class="buttons"><button class="close" onClick="closeModal()">CLOSE</button><button class="save" onClick="saveModal(`score`,`' + team + '`)">SAVE</button></div></div>'
+  string += '</div>'
+  panel.innerHTML = string
+}
+
+// eslint-disable-next-line no-unused-vars
+function timeEditor () {
+  runningTime = false
+  const panel = document.querySelector('.modal-panel')
+  panel.style.display = ''
+  let string = '<div class="fault" style="width:200px;"><span class="title">TIME</span>'
+  string += `<input id='time_editor' style="margin:10px;" value="${document.querySelector('#time').value}" />`
+  string += '<div class="down"><div class="buttons"><button class="close" onClick="closeModal()">CLOSE</button><button class="save" onClick="saveModal(`time`)">SAVE</button></div></div>'
+  string += '</div>'
+  panel.innerHTML = string
+}
+
+function powerInvoker (team) {
+  if (team === 'local') {
+    let done = false
+    localFaults += 1
+    document.querySelectorAll('.visitor_power').forEach((power) => {
+      if (power.attributes.number.value === '1' && power.value === '' && !done) {
+        power.value = '02:00'
+        done = true
+      } else if (power.attributes.number.value === '2' && power.value === '' && !done) {
+        power.value = '02:00'
+      }
+    })
+  } else if (team === 'visitor') {
+    let done = false
+    visitorFaults += 1
+    document.querySelectorAll('.local_power').forEach((power) => {
+      if (power.attributes.number.value === '1' && power.value === '' && !done) {
+        power.value = '02:00'
+        done = true
+      } else if (power.attributes.number.value === '2' && power.value === '' && !done) {
+        power.value = '02:00'
+      }
+    })
+  }
+  let localCount = 0
+  let visitorCount = 0
+  document.querySelectorAll('.visitor_power').forEach((power) => {
+    if (power.value !== '') {
+      localCount += 1
+    }
+  })
+  document.querySelectorAll('.local_power').forEach((power) => {
+    if (power.value !== '') {
+      visitorCount += 1
+    }
+  })
+  let players = 4
+  if (document.querySelector('#period').innerHTML.trim() === 'OT') {
+    players = 3
+  }
+  document.querySelector('.status').innerHTML = (players - localCount) + ' vs ' + (players - visitorCount)
+}
+
+// eslint-disable-next-line no-unused-vars
+function endPower (team) {
+  document.querySelectorAll('.local_power').forEach((power) => {
+    console.log(power.value, power.value === '00:00')
+    if (power.value === '00:00') { power.value = '' }
+  })
+  document.querySelectorAll('.visitor_power').forEach((power) => {
+    console.log(power.value, power.value === '00:00')
+    if (power.value === '00:00') { power.value = '' }
+  })
+}
+
+// eslint-disable-next-line no-unused-vars
+function tiros (team) {
+  document.querySelector(`#${team}_tiros`).textContent = Number(document.querySelector(`#${team}_tiros`).textContent) + 1
+  let localPower = false
+  let visitorPower = true
+  document.querySelectorAll('.local_power').forEach((power) => {
+    if (power.value !== '') localPower = true
+  })
+  document.querySelectorAll('.visitor_power').forEach((power) => {
+    if (power.value !== '') visitorPower = true
+  })
+
+  if (team === 'local' && localPower) {
+    localPowerShoots += 1
+  } else if (team === 'visitor' && visitorPower) {
+    visitorPowerShoots += 1
   }
 }
